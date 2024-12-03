@@ -1,8 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
-import MainPage from './pages/MainPage';
-import AboutPage from './pages/AboutPage';
-import NotFoundPage from './pages/NotFoundPage';
+import MainPage from './pages/Mainpage';
+import AboutPage from './pages/Aboutpage';
+import NotFoundPage from './pages/Notfoundpage';
+import MyFridgePage from './pages/MyFridgepage';
+import SnapFoodPage from './pages/SnapFoodpage';
+import CalendarPage from './pages/Calendarpage';
+
 
 function App() {
   return (
@@ -11,6 +15,9 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<MainPage />} />
           <Route path="about" element={<AboutPage />} />
+          <Route path="/fridge" element={<MyFridgePage />} />
+          <Route path="/snap" element={<SnapFoodPage />} />
+          <Route path="/calendar" element={<CalendarPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

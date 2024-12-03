@@ -10,7 +10,7 @@ const Layout = () => {
       </main>
       <footer className="bg-gray-100 py-4">
         <div className="container mx-auto px-4 text-center">
-          © 2024 Your App Name
+          © HYUBME
         </div>
       </footer>
     </div>
