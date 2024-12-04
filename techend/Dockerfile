@@ -6,4 +6,9 @@ COPY ./src/ .
 
 RUN pip install flask 
 
-EXPOSE 2000
+RUN mkdir /data
+
+EXPOSE 2000 
+
+# 빈 bash 실행
+CMD ["/bin/bash"]

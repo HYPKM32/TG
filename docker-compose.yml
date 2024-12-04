@@ -15,7 +15,6 @@ services:
     dns:
       - 8.8.8.8
 
- 
   backend:
     container_name: backend
     build:
@@ -29,8 +28,20 @@ services:
     environment:
       - NODE_ENV=development
       - MONGODB_URI=mongodb://mongodb:27017/myapp
-    dns:  
+    dns:
       - 8.8.8.8
+
+  techend:
+    container_name: techend
+    build:
+      context: ./techend
+      dockerfile: Dockerfile
+    volumes:
+      - ./techend:/app
+    ports:
+      - "2000:2000"
+    stdin_open: true
+    tty: true
 
   mongodb:
     container_name: mongodb
