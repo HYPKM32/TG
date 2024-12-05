@@ -1,12 +1,28 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Refrigerator, Camera, Calendar, BookOpen } from 'lucide-react'; // 아이콘 사용
+import { Refrigerator, Camera, Calendar, BookOpen } from 'lucide-react';
+import Auth from '../components/Auth';
+import { logout } from '../api/client';
 
 const MainPage = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const userName = localStorage.getItem('userName');
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+  };
+
+
   return (
     <div className="text-center bg-gradient-to-b from-blue-50 to-white min-h-screen p-8">
+      {!isLoggedIn && <Auth onLogin={handleLoginSuccess} />}
+      
       <div className="max-w-6xl mx-auto">
         <h1 className="text-5xl font-bold mb-4 text-blue-600">Fresh Buddy</h1>
-        <p className="text-lg mb-12 text-gray-600">냉장고 속 신선함을 지키는 당신의 똑똑한 친구</p>
+        <p className="text-lg mb-4 text-gray-600">냉장고 속 신선함을 지키는 당신의 똑똑한 친구</p>
+        {userName && (
+          <p className="text-xl mb-8 text-blue-600">안녕하세요 {userName}님!</p>
+        )}
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* 냉장고 관리 */}
