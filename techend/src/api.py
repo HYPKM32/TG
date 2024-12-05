@@ -1,6 +1,9 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file, make_response
 import os
+import io
 import subprocess
+import base64
+import pandas as pd
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
@@ -48,21 +51,40 @@ def handle_image_upload():
         "--weights", "/app/src/weights/best.pt",  # 이 경로가 실제로 존재하는지 확인
         "--img", "416",
         "--conf", "0.1",
+        "--save-csv",
+        "--project","/data/Output",
+        "--exist-ok",
+        "--name", "result",
         "--source", file_path
     ]
 
     try:
         result = subprocess.run(command, capture_output=True, text=True, check=True)
-        return jsonify({
-            "message": "File uploaded and processed successfully!",
-            "output": result.stdout
-        }), 200
+        image_path = "/data/Output/result/carrot.jpeg"
+        
+    # JSON 형식으로 반환
+
+        
+        return send_file(image_path, mimetype='image/jpeg')
+    
     except subprocess.CalledProcessError as e:
         return jsonify({
             "message": "Error occurred during processing.",
             "error": e.stderr,
             "output": e.stdout  # subprocess에서 발생한 stdout도 함께 확인
         }), 500
+        
+@app.route('/api/get_list', methods=['GET'])
+def get_list():
+    csv_path = '/data/Output/result/predictions.csv'
+    
+    csv = pd.read_csv(csv_path,names=['filename','label','conf'])
+    label = csv['label']
+    label_val = label.values
+    label_list = label_val.tolist()
+    os.remove(csv_path)
+    
+    return jsonify(label_list), 200
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=2000)
