@@ -4,8 +4,13 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 require('dotenv').config();
 
+//Routes
 const fridgeRoutes = require('./routes/fridgeRoutes');
+<<<<<<< HEAD
 const authRoutes = require('./routes/authRoutes');
+=======
+//const calendarRoutes = require('./routes/calendarRoutes')
+>>>>>>> a72709ec9f29b480056f01576c0d9a9818913285
 
 const app = express();
 
@@ -38,7 +43,12 @@ app.use(express.json());
 
 // Routes
 app.use('/api/fridge', fridgeRoutes);
+<<<<<<< HEAD
 app.use('/api/auth', authRoutes);
+=======
+//app.use('/api/calendar'. calendarRoutes);
+
+>>>>>>> a72709ec9f29b480056f01576c0d9a9818913285
 
 
 app.use((err, req, res, next) => {

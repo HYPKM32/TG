@@ -7,6 +7,7 @@ COPY ./src/ .
 RUN pip install flask 
 
 RUN mkdir /data
+RUN mkdir /Output
 
 EXPOSE 2000 
 
