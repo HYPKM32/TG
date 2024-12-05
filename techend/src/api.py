@@ -60,7 +60,7 @@ def handle_image_upload():
 
     try:
         result = subprocess.run(command, capture_output=True, text=True, check=True)
-        image_path = "/data/Output/result/carrot.jpeg"
+        image_path = "/data/Output/result/carrot.jpg"
         
     # JSON 형식으로 반환
 
