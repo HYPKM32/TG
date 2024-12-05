@@ -19,6 +19,35 @@ interface UserData {
   pwd: string;
 }
 
+interface FridgeResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    name: string;
+    item: Array<{
+      foodType: string;
+      imgPath: string;
+      dayset: string;
+      dayend: string;
+    }>;
+  };
+}
+
+interface FridgeListResponse {
+  success: boolean;
+  message: string;
+  data: Array<{
+    _id: string;
+    name: string;
+    item: Array<{
+      foodType: string;
+      imgPath: string;
+      dayset: string;
+      dayend: string;
+    }>;
+  }>;
+}
+
 const client = axios.create({
   baseURL: 'http://210.117.211.26:5000/api',
   timeout: 5000,
@@ -113,12 +142,64 @@ if (token) {
 
 export const getFridgeInfo = async (fridgeName: string): Promise<any> => {
   try {
-    const response = await client.get(`/fridge/${fridgeName}`);
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      throw new Error('사용자 인증이 필요합니다.');
+    }
+
+    const response = await client.get(`/fridge/info/${userId}/${fridgeName}`);
     return response.data;
   } catch (error) {
     const axiosError = error as AxiosError<ErrorResponse>;
     if (axiosError.response) {
       throw new Error(`냉장고 정보 조회 실패: ${axiosError.response.data?.message || '알 수 없는 에러'}`);
+    } else if (axiosError.request) {
+      throw new Error('서버에서 응답이 오지 않았습니다.');
+    } else {
+      throw new Error(`요청 실패: ${axiosError.message}`);
+    }
+  }
+};
+
+export const addFridge = async (): Promise<FridgeResponse> => {
+  try {
+    // localStorage에서 userId를 가져옵니다
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      throw new Error('사용자 인증이 필요합니다.');
+    }
+
+    const response = await client.post(`/fridge/add/${userId}`);
+    return response.data;
+  } catch (error) {
+    const axiosError = error as AxiosError<ErrorResponse>;
+    if (axiosError.response) {
+      throw new Error(
+        axiosError.response.data?.message || '냉장고 추가에 실패했습니다.'
+      );
+    } else if (axiosError.request) {
+      throw new Error('서버에서 응답이 오지 않았습니다.');
+    } else {
+      throw new Error(`요청 실패: ${axiosError.message}`);
+    }
+  }
+};
+
+export const getAllFridges = async (): Promise<FridgeListResponse> => {
+  try {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      throw new Error('사용자 인증이 필요합니다.');
+    }
+
+    const response = await client.get(`/fridge/list/${userId}`);
+    return response.data;
+  } catch (error) {
+    const axiosError = error as AxiosError<ErrorResponse>;
+    if (axiosError.response) {
+      throw new Error(
+        axiosError.response.data?.message || '냉장고 목록 조회에 실패했습니다.'
+      );
     } else if (axiosError.request) {
       throw new Error('서버에서 응답이 오지 않았습니다.');
     } else {
