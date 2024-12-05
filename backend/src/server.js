@@ -7,7 +7,9 @@ require('dotenv').config();
 //Routes
 const fridgeRoutes = require('./routes/fridgeRoutes');
 const authRoutes = require('./routes/authRoutes');
-//const calendarRoutes = require('./routes/calendarRoutes')
+const calendarRoutes = require('./routes/calendarRoutes')
+const snapRoutes = require('./routes/snapRoutes');
+const llamaRoutes = require('./routes/llamaRoutes');
 
 const app = express();
 
@@ -41,9 +43,9 @@ app.use(express.json());
 // Routes
 app.use('/api/fridge', fridgeRoutes);
 app.use('/api/auth', authRoutes);
-//app.use('/api/calendar'. calendarRoutes);
-
-
+app.use('/api/calendar', calendarRoutes);
+app.use('/api/snap', snapRoutes);
+app.use('/api/llama', llamaRoutes)
 
 
 app.use((err, req, res, next) => {

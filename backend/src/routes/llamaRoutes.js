@@ -1,5 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const calendarController = require('../controllers/calendarController');
+const llamaController = require('../controllers/llamaController');
 
 module.exports = router;
