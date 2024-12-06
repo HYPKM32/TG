@@ -7,7 +7,7 @@ const snapController = require('../controllers/snapController');
 const storage = multer.memoryStorage();
 const upload = multer({ 
     storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 }  // 5MB
+    limits: { fileSize: 10 * 1024 * 1024 }  // 5MB
 });
 
 // multer 미들웨어를 미리 적용하지 않고 라우터에서 직접 적용

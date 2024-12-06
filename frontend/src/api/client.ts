@@ -1,5 +1,10 @@
 import axios, { AxiosError } from 'axios';
 
+interface ImageProcessResponse {
+  data: Blob;
+  labels: any[]; // 테크엔드에서 반환되는 라벨 데이터의 실제 타입에 맞게 수정 필요
+}
+
 interface AuthResponse {
   message: string;
   token?: string;
@@ -272,6 +277,42 @@ export const calendardayend = async (): Promise<any> => {
       );
     } else if (axiosError.request) {
       throw new Error('서버에서 응답이 오지 않았습니다.');
+    } else {
+      throw new Error(`요청 실패: ${axiosError.message}`);
+    }
+  }
+};
+
+export const processImage = async (imageFile: File): Promise<ImageProcessResponse> => {
+  try {
+    const formData = new FormData();
+    formData.append('image', imageFile);  // multer에서 사용하는 필드명과 일치해야 함
+
+    const response = await client.post('/snap/process', formData, {  // 엔드포인트를 '/snap'으로 수정
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        // multipart/form-data를 사용할 때는 axios가 자동으로 boundary를 설정하도록 함
+      },
+      responseType: 'blob',
+      maxContentLength: 100 * 1024 * 1024, // 100MB
+      timeout: 60000 // 60초
+    });
+
+    // response.headers는 모두 소문자로 처리됨
+    const labels = response.headers['x-labels'] ? JSON.parse(response.headers['x-labels']) : [];
+
+    return {
+      data: response.data,
+      labels: labels
+    };
+  } catch (error) {
+    const axiosError = error as AxiosError<ErrorResponse>;
+    if (axiosError.response) {
+      throw new Error(
+        axiosError.response.data?.message || '이미지 처리에 실패했습니다.'
+      );
+    } else if (axiosError.request) {
+      throw new Error('이미지 처리 서버에 연결할 수 없습니다.');
     } else {
       throw new Error(`요청 실패: ${axiosError.message}`);
     }
