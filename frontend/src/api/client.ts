@@ -208,4 +208,74 @@ export const getAllFridges = async (): Promise<FridgeListResponse> => {
   }
 };
 
+export const calendarFridges = async (): Promise<any> => {
+  try {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      throw new Error('사용자 인증이 필요합니다.');
+    }
+
+    const response = await client.get(`/calendar/list/${userId}`);
+    return response.data;
+  } catch (error) {
+    const axiosError = error as AxiosError<ErrorResponse>;
+    if (axiosError.response) {
+      throw new Error(
+        axiosError.response.data?.message || '냉장고 불러오기에 실패했습니다.'
+      );
+    } else if (axiosError.request) {
+      throw new Error('서버에서 응답이 오지 않았습니다.');
+    } else {
+      throw new Error(`요청 실패: ${axiosError.message}`);
+    }
+  }
+};
+
+
+export const calendarFooddate = async (fridgeName:string): Promise<any> => {
+  try {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      throw new Error('사용자 인증이 필요합니다.');
+    }
+
+    const response = await client.get(`/calendar/date/${userId}/${fridgeName}`);
+    return response.data;
+  } catch (error) {
+    const axiosError = error as AxiosError<ErrorResponse>;
+    if (axiosError.response) {
+      throw new Error(
+        axiosError.response.data?.message || '냉장고 불러오기에 실패했습니다.'
+      );
+    } else if (axiosError.request) {
+      throw new Error('서버에서 응답이 오지 않았습니다.');
+    } else {
+      throw new Error(`요청 실패: ${axiosError.message}`);
+    }
+  }
+};
+
+export const calendardayend = async (): Promise<any> => {
+  try {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      throw new Error('사용자 인증이 필요합니다.');
+    }
+
+    const response = await client.get(`/calendar/dayend/${userId}`);
+    return response.data;
+  } catch (error) {
+    const axiosError = error as AxiosError<ErrorResponse>;
+    if (axiosError.response) {
+      throw new Error(
+        axiosError.response.data?.message || '알람기능 추적실패.'
+      );
+    } else if (axiosError.request) {
+      throw new Error('서버에서 응답이 오지 않았습니다.');
+    } else {
+      throw new Error(`요청 실패: ${axiosError.message}`);
+    }
+  }
+};
+
 export default client;

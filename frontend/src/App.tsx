@@ -6,7 +6,6 @@ import MyFridgePage from './pages/MyFridgepage';
 import SnapFoodPage from './pages/SnapFoodpage';
 import CalendarPage from './pages/Calendarpage';
 
-
 function App() {
   return (
     <Router>
