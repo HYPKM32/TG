@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Camera, Upload, Loader } from 'lucide-react';
-import { processImage } from '../api/client';
-
+import { processImage, getAllFridges } from '../api/client';
 
 const SnapFoodPage = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -14,6 +13,8 @@ const SnapFoodPage = () => {
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [fridges, setFridges] = useState<Array<{ _id: string; name: string }>>([]);
+  const [showFridgeSelection, setShowFridgeSelection] = useState(false);
 
   // base64 문자열을 File 객체로 변환하는 함수
   const base64ToFile = (base64String: string): File => {
@@ -49,8 +50,6 @@ const SnapFoodPage = () => {
       setError('후면 카메라를 시작할 수 없습니다.');
     }
   };
-
-
 
   // 파일 선택 처리
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -130,6 +129,28 @@ const SnapFoodPage = () => {
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  // 냉장고 목록 가져오기
+  const handleGetFridges = async () => {
+    try {
+      const response = await getAllFridges();
+      if (response.success && response.data) {
+        setFridges(response.data);
+        setShowFridgeSelection(true);
+      } else {
+        throw new Error('냉장고 목록을 가져오는데 실패했습니다.');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '냉장고 목록을 가져오는데 실패했습니다.');
+    }
+  };
+
+  // 냉장고 선택 처리
+  const handleFridgeSelect = (fridgeId: string) => {
+    // 여기에 냉장고 선택 후 처리 로직 추가 예정
+    console.log('Selected fridge:', fridgeId);
+    setShowFridgeSelection(false);
   };
 
   return (
@@ -262,7 +283,7 @@ const SnapFoodPage = () => {
                 alt="처리된 식재료"
                 className="w-full rounded-lg"
               />
-              <div className="flex justify-center mt-4">
+              <div className="flex justify-center gap-4 mt-4">
                 <button
                   onClick={() => {
                     setProcessedImage(null);
@@ -271,7 +292,39 @@ const SnapFoodPage = () => {
                   }}
                   className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors duration-300"
                 >
-                  새로운 사진 촬영하기
+                  새로운 사진 
+                </button>
+                <button
+                  onClick={handleGetFridges}
+                  className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors duration-300"
+                >
+                  냉장고 넣기
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* 냉장고 선택 모달 */}
+          {showFridgeSelection && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+                <h3 className="text-xl font-bold mb-4">냉장고 선택</h3>
+                <div className="space-y-3">
+                  {fridges.map((fridge) => (
+                    <button
+                      key={fridge._id}
+                      onClick={() => handleFridgeSelect(fridge._id)}
+                      className="w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                    >
+                      {fridge.name}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={() => setShowFridgeSelection(false)}
+                  className="mt-4 w-full bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors duration-200"
+                >
+                  취소
                 </button>
               </div>
             </div>
