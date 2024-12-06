@@ -25,6 +25,10 @@ if not os.path.exists(UPLOAD_FOLDER):
 
 @app.route('/api/snap', methods=['POST'])
 def handle_image_upload():
+    global image_path
+    
+    
+    
     # 'file' 키로 파일을 받아오는 부분
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
@@ -38,7 +42,7 @@ def handle_image_upload():
         return jsonify({"error": "Invalid file format. Only JPG, JPEG, PNG, GIF are allowed."}), 400
 
     # 파일명 안전하게 처리
-    filename = secure_filename(file.filename)
+    filename =  secure_filename(file.filename)
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
 
     # 파일 저장
@@ -52,7 +56,7 @@ def handle_image_upload():
         "--img", "416",
         "--conf", "0.1",
         "--save-csv",
-        "--project","/data/Output",
+        "--project","/Output",
         "--exist-ok",
         "--name", "result",
         "--source", file_path
@@ -60,13 +64,14 @@ def handle_image_upload():
 
     try:
         result = subprocess.run(command, capture_output=True, text=True, check=True)
-        image_path = "/data/Output/result/carrot.jpg"
+        os.remove(file_path)
+        image_path = "/Output/result/{name}".format(name = filename)
         
     # JSON 형식으로 반환
 
         
         return send_file(image_path, mimetype='image/jpeg')
-    
+        
     except subprocess.CalledProcessError as e:
         return jsonify({
             "message": "Error occurred during processing.",
@@ -76,13 +81,15 @@ def handle_image_upload():
         
 @app.route('/api/get_list', methods=['GET'])
 def get_list():
-    csv_path = '/data/Output/result/predictions.csv'
+    global image_path
+    csv_path = '/Output/result/predictions.csv'
     
     csv = pd.read_csv(csv_path,names=['filename','label','conf'])
     label = csv['label']
     label_val = label.values
     label_list = label_val.tolist()
     os.remove(csv_path)
+    os.remove(image_path)
     
     return jsonify(label_list), 200
 

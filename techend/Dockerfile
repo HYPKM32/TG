@@ -8,6 +8,7 @@ RUN pip install flask
 
 RUN mkdir /data
 RUN mkdir /Output
+# output 폴더 추가
 
 EXPOSE 2000 
 
